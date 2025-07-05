@@ -19,7 +19,7 @@
 <script>
     async function GetCalendar() {
         const userId = document.getElementById('userId').value;
-        const url = `https://localhost:7237/Calendar?${userId}`;
+        const url = `https://localhost:7237/Calendar?userid=${userId}`;
 
         const response = await fetch(url);
 
@@ -102,7 +102,7 @@
                 if (cellData.isScratched) {
                     td.textContent = cellData.prize === "Nothing" ? 'X' : '🏆';
                     td.style.backgroundColor = cellData.prize === "Nothing" ? '#f8d7da' : '#d4edda';
-                } else if (!hasScratched) {
+                } else {
                     const btn = document.createElement('button');
                     btn.textContent = '?';
                     btn.style.width = '20px';
@@ -110,11 +110,16 @@
                     btn.style.padding = '0';
                     btn.style.border = 'none';
                     btn.style.background = 'transparent';
-                    btn.onclick = () => scratchCell(row, col, userId);
-                    td.appendChild(btn);
-                } else {
-                    td.textContent = '-';
-                }
+                    if(!hasScratched) {
+                        btn.style.cursor = 'pointer';
+                            btn.onclick = () => scratchCell(row, col, userId);
+                  
+                    } else {
+                        btn.style.cursor = 'not-allowed';
+                        btn.disabled = true;
+                    }  
+                      td.appendChild(btn);
+                } 
 
                 tr.appendChild(td);
             }
@@ -123,6 +128,10 @@
         }
 
         container.appendChild(table);
+
+        if (hasScratched) {
+            document.getElementById('feedbackField').innerText = 'You have already scratched.';
+        }
     }
 
 

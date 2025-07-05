@@ -67,7 +67,7 @@ namespace NLO_ScratchGame_Database
         public int Row { get; set; }
         public int Column { get; set; }
         public int? ScratchedByUserId { get; set; }
-        public string Prize { get; set; } = "None";
+        public string Prize { get; set; } = "Nothing";
     }
 
     public class ScratchAttempt

@@ -9,7 +9,7 @@ builder.Services.AddSingleton(RabbitHutch.CreateBus("host=localhost;username=gue
 builder.Services.AddDbContext<ScratchGameContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
 
-builder.Services.AddSingleton<IScratchEventPublisher>();
+builder.Services.AddSingleton<IScratchEventPublisher, ScratchEventPublisher>();
 builder.Services.AddHostedService<Worker>();
 
 var host = builder.Build();
