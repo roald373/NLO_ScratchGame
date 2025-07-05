@@ -1,0 +1,160 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <input type="text" id="userId" placeholder="UserId" />
+    <button id="UseridButton" onclick="GetCalendar()"> Start </button>
+    <button id="seedButton" onclick="SeedDatabase()"> Seed Database </button>
+    <button id="cleardButton" onclick="ClearDatabase()"> Clear Database </button>
+
+    <div id="feedbackField"></div>
+
+    <div id="calendar-container">
+    </div>
+</div>
+
+
+
+<script>
+    async function GetCalendar() {
+        const userId = document.getElementById('userId').value;
+        const url = `https://localhost:7237/Calendar?${userId}`;
+
+        const response = await fetch(url);
+
+        const data = await response.json();
+
+        renderCalendar(data, userId);
+    }
+
+    async function SeedDatabase() {
+        const url = `https://localhost:7065/Scratch/seed`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            document.getElementById('feedbackField').innerText = 'Database seeded successfully.';
+        } else {
+            console.error('Failed to seed database');
+            document.getElementById('feedbackField').innerText = 'Failed to seed database. Please try again.';
+        }
+    }
+
+    async function ClearDatabase() {
+        const url = `https://localhost:7065/Scratch`;
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            document.getElementById('feedbackField').innerText = 'Database cleared successfully.';
+        } else {
+            console.error('Failed to clear database');
+            document.getElementById('feedbackField').innerText = 'Failed to clear database. Please try again.';
+        }
+    }
+
+    async function scratchCell(row, column, userId) {
+        const url = `https://localhost:7065/Scratch`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+        },
+            body: JSON.stringify({ userId, row, column}),
+        });
+        if (response.ok) {
+            document.getElementById('feedbackField').innerText = 'Succesfully scratched the cell.';
+        } else {
+            console.error('Failed to scratch cell');
+            document.getElementById('feedbackField').innerText = 'Failed to scratch cell. Please try again.';
+        }
+       }
+
+     async function renderCalendar(data, userId) {
+        const container = document.getElementById('calendar-container');
+        container.innerHTML = '';
+
+        const hasScratched = data.currentUserHasScratched;
+        const grid = data.grid;
+
+        const table = document.createElement('table');
+        table.style.borderCollapse = 'collapse';
+
+        for (let row = 0; row < 100; row++) {
+            const tr = document.createElement('tr');
+
+            for (let col = 0; col < 100; col++) {
+                const cellData = grid.find(c => c.row === row && c.column === col);
+                const td = document.createElement('td');
+                td.style.border = '1px solid #ccc';
+                td.style.width = '20px';
+                td.style.height = '20px';
+                td.style.textAlign = 'center';
+                td.id = `cell-${row}-${col}`;
+
+                if (cellData.isScratched) {
+                    td.textContent = cellData.prize === "Nothing" ? 'X' : '🏆';
+                    td.style.backgroundColor = cellData.prize === "Nothing" ? '#f8d7da' : '#d4edda';
+                } else if (!hasScratched) {
+                    const btn = document.createElement('button');
+                    btn.textContent = '?';
+                    btn.style.width = '20px';
+                    btn.style.height = '20px';
+                    btn.style.padding = '0';
+                    btn.style.border = 'none';
+                    btn.style.background = 'transparent';
+                    btn.onclick = () => scratchCell(row, col, userId);
+                    td.appendChild(btn);
+                } else {
+                    td.textContent = '-';
+                }
+
+                tr.appendChild(td);
+            }
+
+            table.appendChild(tr);
+        }
+
+        container.appendChild(table);
+    }
+
+
+    const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:7237/scratchHub")
+            .build();
+
+    connection.on("CellScratched", (data) => {
+        console.log("Cell scratched:", data);
+
+    if(data.successFullyScratched){
+        const userId = document.getElementById('userId').value;
+        if(data.userId == userId){
+            document.getElementById('feedbackField').innerText = `Scratch processed in backend, you won ${data.prize}`;
+        }
+        else{
+             document.getElementById('feedbackField').innerText = `Scratch processed in backend, somebody won ${data.prize}`;
+        }
+
+        let cell = document.getElementById(`cell-${data.row}-${data.column}`);
+        cell.style.backgroundColor = data.prize == "Nothing" ? '#f8d7da' : '#d4edda';
+        cell.textContent = data.prize == "Nothing" ? 'X' : '🏆';
+    }
+    else{
+        document.getElementById('feedbackField').innerText = 'Failed to scratch cell.';
+    }
+    });
+
+    connection.start()
+        .catch(err => console.error(err.toString()));
+
+    connection.onclose(error => {
+    console.log("❌ SignalR connection closed", error);
+    });
+</script>

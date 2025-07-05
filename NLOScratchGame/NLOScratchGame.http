@@ -1,0 +1,6 @@
+@NLOScratchGame_HostAddress = http://localhost:5003
+
+GET {{NLOScratchGame_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
