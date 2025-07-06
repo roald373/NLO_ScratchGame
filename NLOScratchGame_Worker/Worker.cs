@@ -7,14 +7,12 @@ namespace NLOScratchGame_Worker;
 
 public class Worker : BackgroundService
 {
-    private readonly ILogger<Worker> _logger;
     private readonly IBus _bus;
     private readonly IServiceProvider _serviceProvider;
     private readonly IScratchEventPublisher _publisher;
 
-    public Worker(ILogger<Worker> logger, IBus bus, IServiceProvider serviceProvider, IScratchEventPublisher publisher)
+    public Worker(IBus bus, IServiceProvider serviceProvider, IScratchEventPublisher publisher)
     {
-        _logger = logger;
         _bus = bus;
         _serviceProvider = serviceProvider;
         _publisher = publisher;

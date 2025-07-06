@@ -1,9 +1,9 @@
-namespace NLOScratchGame_Command_API.Requests
+namespace NLOScratchGame
 {
-    public record struct ScratchRequest
+    public readonly record struct ScratchRequest
     {
         public required int UserId { get; init; }
         public required int Row { get; init; }
         public required int Column { get; init; }
-    };
+    }
 }

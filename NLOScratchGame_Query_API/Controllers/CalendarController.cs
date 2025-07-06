@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using NLO_ScratchGame_Contracts;
 using NLO_ScratchGame_Database;
-using NLOScratchGame_Query_API.Hub;
+using NLOScratchGame_Query_API.Models;
 
 namespace NLOScratchGame_Query_API.Controllers
 {
@@ -11,15 +9,11 @@ namespace NLOScratchGame_Query_API.Controllers
     [Route("[controller]")]
     public class CalendarController : ControllerBase
     {
-        private readonly ILogger<CalendarController> _logger;
         private ScratchGameContext _context;
-        private readonly IHubContext<CalendarHub> _hubContext;
 
-        public CalendarController(ILogger<CalendarController> logger, ScratchGameContext context, IHubContext<CalendarHub> hubContext)
+        public CalendarController(ScratchGameContext context)
         {
-            _logger = logger;
             _context = context;
-            _hubContext = hubContext;
         }
 
         [HttpGet]

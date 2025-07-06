@@ -9,13 +9,11 @@ namespace NLOScratchGame.Controllers
     [Route("[controller]")]
     public class ScratchController : ControllerBase
     {
-        private readonly ILogger<ScratchController> _logger;
         private IBus _bus;
         private readonly ScratchGameContext _context;
 
-        public ScratchController(ILogger<ScratchController> logger, IBus bus, ScratchGameContext context)
+        public ScratchController(IBus bus, ScratchGameContext context)
         {
-            _logger = logger;
             _bus = bus;
             _context = context;
         }

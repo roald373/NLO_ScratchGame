@@ -1,12 +1,5 @@
-namespace NLOScratchGame_Query_API
+namespace NLOScratchGame_Query_API.Models
 {
-    public record SupriseCalenderResponse
-    {
-        public required bool CurrentUserHasScratched { get; init; }
-
-        public required List<ScratchCellModel> Grid { get; init; }
-    }
-
     public record ScratchCellModel
     {
         public required int Row { get; init; }
