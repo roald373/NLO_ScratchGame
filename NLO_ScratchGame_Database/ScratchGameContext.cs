@@ -10,6 +10,15 @@ namespace NLO_ScratchGame_Database
         public DbSet<ScratchCell> ScratchCells { get; set; }
         public DbSet<ScratchAttempt> ScratchAttempts { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ScratchCell>()
+                .HasIndex(x => x.ScratchedByUserId)
+                .IsUnique();
+        }
+
         public async Task<bool> SeedData(CancellationToken cancellationToken)
         {
             if (!ScratchCells.Any())

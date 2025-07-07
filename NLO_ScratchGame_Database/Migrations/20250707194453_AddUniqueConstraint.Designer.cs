@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NLO_ScratchGame_Database;
 
@@ -11,9 +12,11 @@ using NLO_ScratchGame_Database;
 namespace NLO_ScratchGame_Database.Migrations
 {
     [DbContext(typeof(ScratchGameContext))]
-    partial class ScratchGameContextModelSnapshot : ModelSnapshot
+    [Migration("20250707194453_AddUniqueConstraint")]
+    partial class AddUniqueConstraint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
